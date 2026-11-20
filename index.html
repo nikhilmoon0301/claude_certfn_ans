@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Q&amp;A Knowledge Base (Questions 1–13)</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-alt: #f1f5f9;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --badge-bg: #eff6ff;
+      --badge-text: #1e40af;
+      --ans-bg: #f0fdf4;
+      --ans-border: #86efac;
+      --ans-text: #166534;
+      --highlight: #fef08a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 0.75rem 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    #searchInput {
+      flex: 1;
+      min-width: 220px;
+      padding: 0.65rem 0.9rem;
+      font-size: 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    #searchInput:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    button {
+      padding: 0.65rem 1.1rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s, opacity 0.15s;
+    }
+
+    #searchBtn {
+      background-color: var(--accent);
+      color: #ffffff;
+    }
+
+    #searchBtn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    #clearBtn {
+      background-color: var(--surface-alt);
+      color: var(--text);
+      border: 1px solid #cbd5e1;
+    }
+
+    #clearBtn:hover {
+      background-color: #e2e8f0;
+    }
+
+    .status-row {
+      margin-top: 0.65rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    main {
+      padding: 1.5rem 1rem 3rem 1rem;
+    }
+
+    .qa-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.4rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+
+    .qa-card.hidden {
+      display: none;
+    }
+
+    .qa-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .q-num {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 0.95rem;
+    }
+
+    .topic-badge {
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+    }
+
+    .question-text {
+      font-size: 1.03rem;
+      font-weight: 600;
+      margin: 0.4rem 0 0.85rem 0;
+      white-space: pre-line;
+    }
+
+    .options-list {
+      margin: 0 0 1rem 0;
+      padding-left: 1.25rem;
+      color: #1e293b;
+    }
+
+    .options-list li {
+      margin-bottom: 0.35rem;
+    }
+
+    .answer-box {
+      background: var(--ans-bg);
+      border-left: 4px solid var(--ans-border);
+      color: var(--ans-text);
+      padding: 0.65rem 0.9rem;
+      border-radius: 6px;
+      font-weight: 700;
+      margin-bottom: 0.85rem;
+    }
+
+    .explanation-box {
+      background: var(--surface-alt);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-size: 0.94rem;
+      color: #334155;
+      white-space: pre-line;
+    }
+
+    .explanation-label {
+      font-weight: 700;
+      color: var(--text);
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+
+    mark {
+      background-color: var(--highlight);
+      color: inherit;
+      padding: 0.05em 0.15em;
+      border-radius: 2px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      background: var(--surface);
+      border: 1px dashed #cbd5e1;
+      border-radius: 10px;
+      color: var(--muted);
+      display: none;
+    }
+
+    .empty-state.visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Questions &amp; Answers Archive</h1>
+      <div class="search-bar">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search by keyword (e.g., MCP, Grep, CLAUDE.md, Redis, citations, few-shot)..."
+          aria-label="Search questions and answers"
+        />
+        <button type="button" id="searchBtn">Search</button>
+        <button type="button" id="clearBtn">Reset</button>
+      </div>
+      <div class="status-row">
+        <span id="resultCount">Showing all 13 questions</span>
+        <span id="noteText">Note: Question #13 was cut off in your prompt ("Your automated code review is missing genuine bu..."). Paste the rest anytime to include more!</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div id="qaList"></div>
+      <div id="emptyState" class="empty-state">
+        No matching questions, options, answers, or explanations found for your search.
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const QA_DATA = [
+      {
+        num: "1",
+        topic: "Claude Agent SDK / Codebase Exploration",
+        question: "You are building developer-productivity tools using the Claude Agent SDK. The agent helps engineers explore unfamiliar codebases, understand legacy systems, generate boilerplate code, and automate repetitive tasks. It uses the built-in tools—Read, Write, Bash, Grep, and Glob—and integrates with Model Context Protocol (MCP) servers.\nAn engineer who recently joined the team asks the agent to explain the authentication and authorization architecture before making security improvements. The codebase contains more than 800 files across multiple services.\nWhat exploration strategy will most effectively build understanding while respecting context limits?",
+        options: [
+          "A. Launch parallel subagents to explore every service simultaneously, and then synthesize their findings into an architectural overview.",
+          "B. Read all files containing auth , login , permission , or token in their filenames or contents.",
+          "C. Read all CLAUDE.md and README files first, and then ask the engineer to identify the 10–15 most important authentication files.",
+          "D. Use Grep to locate authentication entry points, read those files, and then follow imports and function calls incrementally to map the authentication flow."
+        ],
+        answer: "Answer: D",
+        explanation: "Option D builds an evidence-based architectural map without indiscriminately loading hundreds of files. Authentication entry points may include route handlers, middleware registration, token-validation functions, session constructors, or identity-provider callbacks. After Grep identifies those anchors, targeted Read operations can establish their responsibilities, while imports, call sites, and configuration references reveal the downstream authorization flow. Anthropic’s large-codebase guidance recommends scoping Claude to the portion of a repository touched by the task because unrelated instructions and file reads consume tokens and degrade performance. Its common workflows guidance similarly recommends beginning broadly and narrowing into specific components. Option A launches agents before the relevant service boundaries are known and may produce overlapping, inconsistent investigations. Option B is an uncontrolled lexical sweep that will include tests, documentation, unrelated tokens, and incidental terminology. Option C appropriately checks project guidance but incorrectly delegates technical file selection to a new engineer who may not know the architecture. Incremental dependency tracing maintains context efficiency while producing a verifiable end-to-end map grounded in actual code paths."
+      },
+      {
+        num: "2",
+        topic: "Tool Design and MCP Integration",
+        question: "You are building developer-productivity tools using the Claude Agent SDK. The agent helps engineers explore unfamiliar codebases, understand legacy systems, generate boilerplate code, and automate repetitive tasks. It uses the built-in tools—Read, Write, Bash, Grep, and Glob—and integrates with Model Context Protocol (MCP) servers.\nEngineers frequently ask the agent to cross-reference code changes with Jira tickets during reviews—checking ticket descriptions, acceptance criteria, and recent comments. This currently requires manually copying and pasting content into conversations. The team wants the agent to access this standard Jira ticket data directly.\nWhat is the most effective approach?",
+        options: [
+          "A. Use the Bash tool with curl to call Jira’s REST API, including authentication headers and parsing JSON responses inline.",
+          "B. Build a custom MCP server wrapping Jira’s API with tools designed specifically for this team’s code-review workflow.",
+          "C. Export Jira tickets to Markdown files in the repository that the agent accesses using the Read tool.",
+          "D. Integrate an existing Jira MCP server that exposes tickets, comments, and metadata through discoverable tool interfaces."
+        ],
+        answer: "Answer: D",
+        explanation: "Option D uses the established integration mechanism without creating unnecessary infrastructure. Anthropic’s Claude Code MCP documentation specifically recommends connecting an MCP server when users repeatedly copy information from an external system, such as an issue tracker, into conversations. Once connected, the server exposes Jira operations through named, schema-defined tools that Claude can discover and invoke directly. This allows the agent to retrieve ticket descriptions, acceptance criteria, comments, and metadata while preserving the server’s authentication and access controls.\nOption A exposes authentication details to shell commands and requires the agent to construct requests and parse responses repeatedly. Option B is justified only when no existing server provides the required capabilities or the workflow requires highly specialized operations. The question requires standard Jira information, so building and maintaining another server is unnecessary. Option C creates stale, manually synchronized copies that lose permissions, current comments, and authoritative ticket state. The team should therefore select a trusted Jira MCP implementation, configure appropriate read-only scopes where possible, and verify its tool descriptions and data-access boundaries before enabling it."
+      },
+      {
+        num: "3",
+        topic: "Context Management and Reliability",
+        question: "You are building a multi-agent research system using the Claude Agent SDK. A coordinator agent delegates to specialized subagents: one searches the web, one analyzes documents, one synthesizes findings, and one generates reports. The system researches topics and produces comprehensive, cited reports.\nThe synthesis agent receives summarized findings from the web-search and document-analysis agents, then passes a consolidated summary to the report generator. During testing, you discover that the generated reports make factual claims without proper citations. The report generator cannot attribute statements to their original sources because that metadata was lost during the summarization steps.\nWhat is the most effective approach to ensure proper source attribution in the final reports?",
+        options: [
+          "A. Have each agent output structured data separating content summaries from source metadata such as URLs, document names, and page numbers.",
+          "B. Skip summarization and pass the complete raw outputs from web search and document analysis directly to the report generator.",
+          "C. Instruct the synthesis agent to embed source references inline within its summary text using a consistent citation format.",
+          "D. Have the report generator query the web-search agent to relocate sources for claims in the final report."
+        ],
+        answer: "Answer: A",
+        explanation: "Option A preserves provenance as first-class data throughout the pipeline. Each finding should contain the summarized claim, supporting excerpt, source identifier, URL or document title, and location information such as a page or content-block index. The synthesis agent can combine findings without severing the association between evidence and source, while the report generator can render citations directly from the structured records. Anthropic’s Citations documentation explains that reliable citations identify the supporting passage and its precise source location, including PDF page ranges or content-block indices. Passing all raw output, option B, preserves evidence but introduces excessive context and makes source selection harder.\nInline references in prose, option C, are vulnerable to being altered, omitted, or detached from claims during subsequent summarization. Option D repeats research after report generation and may locate a different source rather than the evidence originally used. A structured provenance contract should therefore be required in every subagent’s output and validated at each handoff. The report generator should reject or flag factual claims that lack an associated evidence record instead of inventing or retrospectively reconstructing citations."
+      },
+      {
+        num: "4",
+        topic: "Context Management and Reliability",
+        question: "You are using Claude Code to accelerate software development. Your team uses it for code generation, refactoring, debugging, and documentation. You need to integrate it into your development workflow with custom slash commands, CLAUDE.md configurations, and understand when to use plan mode vs direct execution.\nYour infrastructure-as-code repository includes Terraform modules ( /terraform/ ), Kubernetes manifests ( /kubernetes/ ), and CI/CD pipeline scripts ( /pipelines/ ). Each requires different conventions, but your single root CLAUDE.md has grown to 500+ lines. When developers work on Kubernetes files, Terraform-specific rules load into context unnecessarily, consuming tokens.\nWhat is the best approach to reorganize so only relevant guidance loads when editing specific file types?",
+        options: [
+          "A. Create files in .claude/rules/ with YAML frontmatter path-scoping (e.g., paths: [ \" terraform/**/*.tf \" ] ), loading rules only when editing matching files.",
+          "B. Restructure the root CLAUDE.md into clearly labeled sections with headers (e.g., “## Terraform Conventions”), improving organization and readability.",
+          "C. Split content into subdirectory CLAUDE.md files ( /terraform/CLAUDE.md , /kubernetes/CLAUDE. md ), so Claude loads directory-specific guidance.",
+          "D. Keep the root CLAUDE.md and use @path/to/import syntax to modularly include tool-specific guidance files from separate documents."
+        ],
+        answer: "Answer: A",
+        explanation: "Path-scoped rules directly satisfy the requirement that instructions load only when Claude works with matching files. Each infrastructure domain can have a separate Markdown file under .claude/rules/ , with YAML paths frontmatter targeting Terraform files, Kubernetes manifests, or pipeline configuration.\nAnthropic documents that .claude/rules/ keeps project guidance modular and supports conditional loading based on glob patterns. Rules with a paths field apply only when Claude works with matching files, reducing irrelevant context and token consumption. Rules without path frontmatter load unconditionally. ( https://code. claude.com/docs/en/memory )\nOption B improves readability but leaves all 500-plus lines in every session. Option C can provide directory-specific CLAUDE.md guidance, but path-scoped rules are more precise when conventions depend on extensions or patterns spanning multiple directories. Option D still requires manual imports and does not provide the documented conditional rule-loading mechanism.\nA suitable design would use rules such as terraform.md scoped to terraform/**/*.tf , kubernetes.md scoped to kubernetes/**/*.{yaml,yml} , and pipelines.md scoped to the pipeline directory. Broad project-wide commands and repository etiquette can remain in the root CLAUDE.md.\nOfficial references/topics: .claude/rules/ ; Path-Specific Rules; YAML Frontmatter; Context-Efficient Instruction Loading."
+      },
+      {
+        num: "5",
+        topic: "Prompt Engineering and Structured Output",
+        question: "You are building a structured data extraction system using Claude. The system extracts information from unstructured documents, validates the output using JavaScript Object Notation (JSON) schemas, and maintains high accuracy. It must handle edge cases gracefully and integrate with downstream systems.\nYour schema includes a skills: string[] field. Production monitoring reveals three consistency issues: (1) compound phrases like “Python and SQL” are sometimes kept as one entry, sometimes split; (2) implied but unstated skills occasionally appear in extractions; (3) similar documents produce wildly different array lengths (5-10 vs 40+ entries). Your prompt currently says “Extract all skills mentioned.”\nWhat’s the most effective improvement?",
+        options: [
+          "A. Enrich the schema to {skill: string, confidence: float, source_quote: string}[] to capture extraction metadata.",
+          "B. Add few-shot examples demonstrating compound phrase handling, explicit mention criteria, and appropriate entry granularity.",
+          "C. Add constraints: “Extract 10-20 skills maximum, one skill per entry, only explicitly named skills.”",
+          "D. Add post-extraction normalization that maps skills to a canonical taxonomy and deduplicates similar entries."
+        ],
+        answer: "Answer: B",
+        explanation: "The failure is caused by an underspecified extraction policy rather than an inadequate JSON structure. “Extract all skills mentioned” does not define whether coordinated phrases should be split, whether inferred capabilities qualify, or what level of specificity constitutes one skill. Few-shot examples can demonstrate all three decisions using concrete inputs and expected outputs.\nAnthropic identifies examples as one of the most effective ways to improve output accuracy and consistency because they communicate behavior more precisely than abstract instructions alone. Representative examples can show that “Python and SQL” becomes two entries, that an unstated skill must not be inferred from a job title, and that broad descriptions should not be decomposed into dozens of speculative micro-skills. ( https://docs.anthropic.com/en/docs/about-claude/use-case-guides/ticket-routing )\nOption A adds provenance and confidence metadata but does not define the correct extraction granularity. Option C addresses explicitness and splitting, but the arbitrary 10–20 limit can truncate documents containing more than 20 legitimate skills or force padding when fewer than 10 appear. Option D is useful for canonicalization and deduplication, but post-processing cannot reliably remove plausible implied skills or determine how the original phrase should have been interpreted.\nThe strongest prompt should combine explicit rules with diverse few-shot examples covering normal cases, compound phrases, implied information, duplicates, and unusually long or short skill lists.\nOfficial references/topics: Few-Shot Prompting, Output Consistency, Explicit Extraction Criteria, Representative Examples."
+      },
+      {
+        num: "6",
+        topic: "Claude Code Configuration and Workflows",
+        question: "You are integrating Claude Code into your Continuous Integration/Continuous Deployment (CI/CD) pipeline. The system runs automated code reviews, generates test cases, and provides feedback on pull requests. You need to design prompts that provide actionable feedback and minimize false positives.\nThe automated review consistently flags patterns your team uses intentionally—force-unwrapping optionals in test files, using large coordinator classes that follow your established architecture, and importing internally maintained modules marked as deprecated in the public SDK. Developers dismiss approximately 30% of all findings as project-specific false positives.\nWhich approach prevents the model from generating these findings in the first place by supplying the project’ s conventions as persistent context during every review?",
+        options: [
+          "A. Document the team’s accepted patterns and intentional conventions in the project’s CLAUDE.md file so the model receives this context during every review.",
+          "B. Configure the review to analyze only the changed lines in the diff without the surrounding file context, reducing the amount of code the model evaluates.",
+          "C. Build post-processing keyword filters that suppress findings containing terms such as “force unwrap,” “large class,” or “deprecated import” before results reach developers.",
+          "D. Have developers add inline suppression comments at flagged lines and preprocess diffs to exclude suppressed lines before sending code to the model."
+        ],
+        answer: "Answer: A",
+        explanation: "Option A supplies the missing project context before Claude evaluates the code. Anthropic’s CLAUDE.md documentation defines project-level files as persistent, version-controlled instructions for coding standards, architecture, workflows, and conventions. The described exceptions are stable repository facts: force-unwrapping is permitted in tests, coordinator classes follow an intentional pattern, and an internally maintained dependency remains approved despite its public deprecation status. Recording these facts concisely allows every review session to interpret the patterns correctly.\nOption B removes surrounding evidence and would make architectural and cross-file judgments less reliable. Option C hides findings after generation and can suppress genuine bugs containing the same keywords.\nOption D adds noise to source files and distributes policy across individual call sites instead of documenting it centrally. The CLAUDE.md entries should be specific and scoped—for example, limiting the force-unwrapping exception to test paths rather than approving it globally. Anthropic notes that shorter, precise instructions are followed more consistently, so the file should state the accepted convention, its scope, and any conditions that would still make the pattern reportable."
+      },
+      {
+        num: "7",
+        topic: "Claude Code Configuration and Workflows",
+        question: "You are using Claude Code to accelerate software development. Your team uses it for code generation, refactoring, debugging, and documentation. You need to integrate it into your development workflow with custom slash commands, CLAUDE.md configurations, and understand when to use plan mode vs direct execution.\nYou’re implementing a caching layer for API responses to speed up the /products endpoint. You have a rough idea—Redis with a 5-minute TTL—but you’re new to production caching and aren’t sure what other considerations a robust implementation requires.\nWhat’s the most effective way to start your iterative workflow?",
+        options: [
+          "A. Ask Claude to interview you about the caching requirements before implementing, surfacing considerations like invalidation strategies, cache layers, consistency guarantees, and failure modes.",
+          "B. Use plan mode to analyze the current /products endpoint implementation, then provide your caching requirements once Claude explains how the existing code is structured.",
+          "C. Start with a minimal request: “Add Redis caching to /products with 5-minute TTL.” Add features and fix issues through follow-up prompts as problems surface during testing.",
+          "D. Write a specification with your known requirements and “TBD” markers for uncertain areas, having Claude propose solutions for each TBD as it implements."
+        ],
+        answer: "Answer: A",
+        explanation: "The primary risk is not implementation difficulty but incomplete requirements. Production caching introduces decisions involving invalidation, stale-data tolerance, cache keys, tenant boundaries, serialization, stampede prevention, failure behavior, observability, deployment topology, and consistency expectations. Implementing Redis with a five-minute TTL before resolving these questions can produce a technically functional but operationally unsafe design.\nAnthropic recommends having Claude interview the user before beginning a larger feature when important requirements remain uncertain. The AskUserQuestion workflow is intended to surface technical implementation concerns, edge cases, trade-offs, and assumptions the user may not have considered.\nAnthropic further recommends converting the resulting answers into a self-contained specification with explicit scope and an end-to-end verification step. ( https://code.claude.com/docs/en/best-practices )\nOption B provides useful codebase context but postpones requirement discovery. Option C creates avoidable rework by allowing architecture to emerge from production failures. Option D documents uncertainty but delegates unresolved design choices during implementation, when they may already constrain the code.\nAfter the interview produces a caching specification, Claude can enter plan mode to inspect the endpoint and map those requirements onto the existing architecture before implementation.\nOfficial references/topics: Requirements Interviewing; AskUserQuestion; Specification Development; Edge-Case and Trade-Off Discovery."
+      },
+      {
+        num: "8",
+        topic: "Context Management and Reliability",
+        question: "The web-search agent has gathered several relevant sources for a research topic. The document-analysis agent now needs to examine those sources. How does information typically flow between these two specialized subagents?",
+        options: [
+          "A. The coordinator receives the web-search agent’s output and includes the relevant sources and findings in the prompt used to invoke the document-analysis agent.",
+          "B. The web-search agent directly invokes the document-analysis agent and passes the discovered sources as parameters.",
+          "C. The agents communicate through an event-driven message queue, with the document-analysis agent subscribing to web-search completion events.",
+          "D. Both agents automatically access a shared memory store in which the web-search agent writes its findings."
+        ],
+        answer: "Answer: A",
+        explanation: "Option A matches the standard coordinator-managed subagent model. The coordinator invokes the web-search agent, receives its final result, selects the useful URLs or source records, and then supplies them explicitly when invoking the document-analysis agent. This keeps task ownership, provenance, and execution order visible to the coordinator.\nThe Claude Agent SDK subagent documentation states that a subagent begins with a fresh context window and does not inherit the parent’s conversation history or previous tool results. The information passed through the Agent tool’s prompt is the primary parent-to-subagent context channel. Consequently, the analysis prompt must include the source URLs, documents, retrieval notes, and any questions the analyzer must answer.\nOption B requires nested delegation that is neither stated nor necessary and reduces centralized observability. Options C and D describe valid custom architectures only if the application has deliberately implemented a queue or shared memory system; neither is automatic Agent SDK behavior. Coordinator-mediated handoff is therefore the expected approach. For reliability, the handoff should use structured source records rather than an informal prose statement, ensuring that the analyzer receives identifiers, provenance, relevant excerpts, and analysis objectives."
+      },
+      {
+        num: "9",
+        topic: "Context Management and Reliability",
+        question: "You are building a multi-agent research system using the Claude Agent SDK. A coordinator agent delegates to specialized subagents: one searches the web, one analyzes documents, one synthesizes findings, and one generates reports. The system researches topics and produces comprehensive, cited reports.\nProduction monitoring shows that follow-up queries such as “summarize what we learned about market trends” consistently take more than 40 seconds. Investigation reveals that the coordinator spawns the synthesis subagent for each summarization request, passing more than 80,000 tokens of accumulated findings. The coordinator already has these findings in its context from orchestrating the research.\nWhat is the most effective way to improve response time for these follow-up summaries?",
+        options: [
+          "A. Spawn the synthesis subagent with reduced context and have it request specific findings from the coordinator on demand.",
+          "B. Have the coordinator handle straightforward summarization requests directly using its existing context, reserving subagent spawning for complex analysis.",
+          "C. Pre-generate and cache summaries at multiple granularities whenever new findings accumulate.",
+          "D. Enable prompt caching on the synthesis subagent to reduce the overhead of repeatedly transferring the same research findings."
+        ],
+        answer: "Answer: B",
+        explanation: "Option B eliminates an unnecessary agent boundary. The coordinator already possesses the accumulated findings and can answer a straightforward follow-up without serializing more than 80,000 tokens into a fresh subagent context, waiting for another model execution, and receiving the result back. Anthropic’s multi-agent research engineering guidance emphasizes scaling effort to task complexity: simple fact-finding or lightweight processing should use substantially fewer agents and tool calls than complex research. It also reports that multi-agent systems consume far more tokens than ordinary interactions, making avoidable delegation expensive and slow. Option A adds an interactive retrieval protocol between agents and additional round trips. Option C spends compute proactively on summaries that users may never request and creates cache-invalidation problems whenever findings change. Option D could reduce repeated input cost where caching is applicable, but the subagent still receives and processes an unnecessarily large context and still incurs spawning latency. Delegation is valuable when an isolated context or specialized capability materially improves the result. For a direct summary already supported by the coordinator’s active context, local handling is the faster and simpler architecture."
+      },
+      {
+        num: "10",
+        topic: "Agentic Architecture and Orchestration",
+        question: "When analyzing complex legal cases that cite multiple precedents, the document-analysis subagent processes each precedent sequentially. A landmark case citing 12 precedents takes more than three minutes to analyze completely. What is the most effective way to reduce this latency while preserving the coordinator’s ability to monitor and debug the system?",
+        options: [
+          "A. Have the coordinator spawn parallel document-analysis subagents, each handling a subset of precedents, and then aggregate the results before synthesis.",
+          "B. Enable the document-analysis subagent to spawn its own specialized subagents dynamically when it encounters cases with many citations.",
+          "C. Create a recursive agent hierarchy where analysis agents subdivide work among child agents until reaching single-precedent granularity.",
+          "D. Implement a message queue where precedent-analysis tasks are processed asynchronously by a pool of worker agents."
+        ],
+        answer: "Answer: A",
+        explanation: "Option A parallelizes independent precedent analysis while preserving centralized control. The coordinator can partition the 12 precedents into balanced groups, provide each worker with identical extraction and citation requirements, monitor completion or failure, and aggregate the structured results before invoking synthesis.\nAnthropic’s multi-agent research architecture uses an orchestrator-worker pattern in which a lead agent coordinates specialized subagents operating in parallel. Parallel execution is valuable when tasks are substantially independent, as each precedent can be analyzed without waiting for the preceding case.\nMaintaining the fan-out at the coordinator also produces a clear execution trace showing each assignment, status, and returned result.\nOption B introduces nested delegation and makes tool usage, permissions, failures, and costs harder for the coordinator to observe. Option C compounds those problems through recursive spawning and risks excessive agent and token consumption. Option D may be appropriate for a large distributed processing platform, but it adds infrastructure without inherently improving the coordinator’s reasoning-level observability or defining how results are associated with the case. Coordinator-managed parallel workers provide the required latency reduction with the simplest debuggable architecture."
+      },
+      {
+        num: "11",
+        topic: "Prompt Engineering and Structured Output",
+        question: "Your automated review calls the Claude API for each pull request, using tool_use with a report_findings tool that returns a JSON array of finding objects. Each object contains file_path, line_number, severity, category, and description. During testing on a large pull request touching more than 30 files, the response reaches the max_tokens limit and is truncated in the middle of the JSON, causing your pipeline’s parser to fail. What is the most effective way to handle this?",
+        options: [
+          "A. Split the review into multiple API calls that each analyze a subset of the changed files, and then merge the resulting findings arrays.",
+          "B. Increase max_tokens to the model’s maximum and instruct Claude to keep each finding description under 50 words.",
+          "C. Switch from tool_use to prompting Claude to return findings as a Markdown list.",
+          "D. Add retry logic that detects truncated JSON and resends the request with instructions to report only critical- and high-severity findings."
+        ],
+        answer: "Answer: A",
+        explanation: "Option A reduces the maximum output required from any single response while preserving the structured schema and complete severity range. The pipeline can partition files into coherent groups, execute bounded reviews, validate each returned array, and merge and deduplicate findings using stable fields such as file path, line number, category, and description.\nAnthropic’s stop-reason documentation confirms that max_tokens means generation reached the configured output limit and the response must be treated as incomplete. Structured output constraints can guarantee schema-valid generation when completion succeeds, but they cannot create unlimited output capacity. A large findings array can still exceed the available token budget.\nOption B may postpone the failure but provides no durable guarantee for still-larger pull requests, and aggressively shortening descriptions may eliminate necessary evidence. Option C abandons machine-validated structure without reducing the amount of generated content. Option D deliberately suppresses medium- or low-severity findings and repeats an oversized request rather than addressing its scope.\nPartitioning establishes predictable output bounds, supports targeted retries, retains every required finding category, and prevents a single truncated response from invalidating the complete review."
+      },
+      {
+        num: "12",
+        topic: "Prompt Engineering and Structured Output",
+        question: "You are integrating Claude Code into your Continuous Integration/Continuous Deployment (CI/CD) pipeline. The system runs automated code reviews, generates test cases, and provides feedback on pull requests. You need to design prompts that provide actionable feedback and minimize false positives.\nAfter deploying automated code review, developers report that approximately 35% of findings are false positives following consistent patterns: style suggestions that contradict team conventions, security warnings for patterns that are safe in the deployment environment, and performance suggestions that would degrade this particular use case.\nYou want to reduce false positives while enabling the model to generalize its judgment to novel code patterns it has not seen before.\nWhich approach is most effective?",
+        options: [
+          "A. Create a comprehensive specification of every pattern that must not be flagged and include the complete document in the system prompt.",
+          "B. Include few-shot examples containing annotated code snippets that distinguish acceptable project patterns from genuine issues in each category.",
+          "C. Use keyword-based post-processing to remove findings containing terms such as “convention,” “context-dependent,” or “trade-off.”",
+          "D. Add general instructions telling Claude to be conservative and report only definite issues."
+        ],
+        answer: "Answer: B",
+        explanation: "Option B demonstrates the decision boundary Claude must learn. Carefully selected examples can show structurally similar code producing different outcomes based on project context—for example, an approved authentication wrapper versus an unsafe direct call, or a deliberate performance trade-off versus an accidental quadratic operation. These contrasts help Claude apply the underlying judgment to new code rather than merely memorizing prohibited phrases.\nAnthropic identifies relevant, diverse, and clearly structured examples as one of the most reliable methods for improving output accuracy and consistency. It recommends several examples that mirror the real use case and cover important edge conditions. Option A risks creating an oversized negative catalogue that consumes context, becomes difficult to maintain, and cannot anticipate every future variation. Option C filters text after generation and may suppress genuine findings that happen to use the selected keywords. Option D is dangerously vague: telling a reviewer to be conservative can suppress real but uncertain defects and reduce recall. The prompt should provide paired acceptable/problematic examples, explain why each classification differs, and require concrete code evidence for every reported finding. Anthropic prompting best practices"
+      },
+      {
+        num: "13",
+        topic: "Prompt Engineering and Structured Output (Incomplete Prompt)",
+        question: "Your automated code review is missing genuine bu",
+        options: [],
+        answer: "Incomplete question in prompt",
+        explanation: "This question was cut off mid-sentence in your message ('Your automated code review is missing genuine bu...'). If you paste the full Question #13 (and Questions #14–#152), I can update this page with the complete text, options, answer, and explanation."
+      }
+    ];
+
+    const qaListEl = document.getElementById("qaList");
+    const searchInputEl = document.getElementById("searchInput");
+    const searchBtnEl = document.getElementById("searchBtn");
+    const clearBtnEl = document.getElementById("clearBtn");
+    const resultCountEl = document.getElementById("resultCount");
+    const emptyStateEl = document.getElementById("emptyState");
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function escapeRegExp(str) {
+      return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function highlightText(rawText, query) {
+      const escaped = escapeHtml(rawText);
+      const trimmed = query.trim();
+      if (!trimmed) return escaped;
+
+      const terms = trimmed.split(/\s+/).filter(Boolean).map(escapeRegExp);
+      if (terms.length === 0) return escaped;
+
+      const regex = new RegExp(`(${terms.join("|")})`, "gi");
+      return escaped.replace(regex, "<mark>$1</mark>");
+    }
+
+    function renderCards(query = "") {
+      const trimmedQuery = query.trim();
+      const terms = trimmedQuery.toLowerCase().split(/\s+/).filter(Boolean);
+
+      qaListEl.innerHTML = "";
+      let visibleCount = 0;
+
+      QA_DATA.forEach((item) => {
+        const searchableBlob = [
+          item.num,
+          item.topic,
+          item.question,
+          ...(item.options || []),
+          item.answer,
+          item.explanation
+        ]
+          .join(" ")
+          .toLowerCase();
+
+        const matches = terms.every((term) => searchableBlob.includes(term));
+        if (!matches) return;
+
+        visibleCount += 1;
+
+        const card = document.createElement("article");
+        card.className = "qa-card";
+
+        const optionsHtml =
+          item.options && item.options.length > 0
+            ? `<ul class="options-list">${item.options
+                .map((opt) => `<li>${highlightText(opt, trimmedQuery)}</li>`)
+                .join("")}</ul>`
+            : "";
+
+        card.innerHTML = `
+          <div class="qa-meta">
+            <span class="q-num">Question #${highlightText(item.num, trimmedQuery)}</span>
+            <span class="topic-badge">${highlightText(item.topic, trimmedQuery)}</span>
+          </div>
+          <div class="question-text">${highlightText(item.question, trimmedQuery)}</div>
+          ${optionsHtml}
+          <div class="answer-box">${highlightText(item.answer, trimmedQuery)}</div>
+          <div class="explanation-box">
+            <span class="explanation-label">Explanation</span>
+            ${highlightText(item.explanation, trimmedQuery)}
+          </div>
+        `;
+
+        qaListEl.appendChild(card);
+      });
+
+      if (!trimmedQuery) {
+        resultCountEl.textContent = `Showing all ${visibleCount} questions`;
+      } else {
+        resultCountEl.textContent = `Found ${visibleCount} matching question${visibleCount === 1 ? "" : "s"} for "${trimmedQuery}"`;
+      }
+
+      emptyStateEl.classList.toggle("visible", visibleCount === 0);
+    }
+
+    searchInputEl.addEventListener("input", (e) => {
+      renderCards(e.target.value);
+    });
+
+    searchBtnEl.addEventListener("click", () => {
+      renderCards(searchInputEl.value);
+      searchInputEl.focus();
+    });
+
+    searchInputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        renderCards(searchInputEl.value);
+      }
+    });
+
+    clearBtnEl.addEventListener("click", () => {
+      searchInputEl.value = "";
+      renderCards("");
+      searchInputEl.focus();
+    });
+
+    // Initial render: display all provided questions, options, answers, and explanations below the search bar
+    renderCards("");
+  </script>
+</body>
+</html>
